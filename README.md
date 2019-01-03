@@ -20,7 +20,7 @@ GORMigro is tool for handling the gorm migrations with builtin cobra command for
 
 # Installing
 Just run:
-    go get -u github.com/PragGoLabs/gormigro
+    `go get -u github.com/PragGoLabs/gormigro`
 
 # Configuration
 
@@ -248,7 +248,7 @@ And that's it now you will be able your migration thru cmd interface, expected o
 # Contributing
 
 1. Fork it
-2. Clone (`git clone https://github.com/your_username/grupttor && cd grupttor`)
+2. Clone (`git clone https://github.com/your_username/gormigro && cd gormigro`)
 3. Create your feature branch (`git checkout -b my-new-feature`)
 4. Do changes, Commit, Push
 5. Create new pull request
