@@ -79,7 +79,7 @@ func (g *Gormigro) Migrate() error {
 	lastMigration := g.migrationManager.GetLastExecutedMigration()
 	var err error
 	if lastMigration == nil && g.options.RunInitSchema && g.initialSchemaMigration != nil {
-		err = g.initialSchemaMigration(g.db)
+		err = g.runInitialSchemaFunc()
 	}
 
 	if err != nil {
@@ -209,8 +209,6 @@ func (g *Gormigro) runInitialSchemaFunc() error {
 
 	// start transaction
 	tx := g.db.Begin()
-
-	defer tx.Close()
 
 	// run init func
 	// rollback if any problem occured
