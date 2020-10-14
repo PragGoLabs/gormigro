@@ -1,7 +1,6 @@
 [[constraint]]
-  name = "github.com/jinzhu/gorm"
-  version = "1.9.2"
-
-[[constraint]]
   name = "github.com/spf13/cobra"
   version = "v0.0.3"
+[[constraint]]
+  name = "gorm.io/gorm"
+  version = "1.20.2"

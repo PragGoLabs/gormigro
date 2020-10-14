@@ -2,8 +2,12 @@ package gormigro
 
 import (
 	"fmt"
-	"github.com/jinzhu/gorm"
 	"log"
+	"os"
+	"time"
+
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 // Gormigro is migration tool which allow you to simply handle migrations with gorm.io
@@ -24,18 +28,28 @@ type Gormigro struct {
 	migrationManager MigrationManager
 }
 
+var DebugLogger = logger.New(
+	log.New(os.Stdout, "\r\n", log.LstdFlags),
+	logger.Config{
+		SlowThreshold: time.Second, // Slow SQL threshold
+		LogLevel:      logger.Info, // Log level
+		Colorful:      true,        // Disable color
+	})
+
 // NewGormigro return instance of gormigro based on options passed
 // work with all collected migrations
 func NewGormigro(db *gorm.DB, options Options) *Gormigro {
 	if options.DebugMode {
-		db.LogMode(true)
+		db.Logger = DebugLogger
 	}
 
 	return &Gormigro{
 		db:                   db,
 		options:              options,
 		migrationsCollection: DefaultCollector.Export(),
-		migrationManager:     NewMigrationManager(db.New(), options.MigrationTable),
+		migrationManager: NewMigrationManager(db.Session(&gorm.Session{
+			WithConditions: false,
+		}), options.MigrationTable),
 	}
 }
 
@@ -43,14 +57,16 @@ func NewGormigro(db *gorm.DB, options Options) *Gormigro {
 // with specified migrations on input
 func NewGormigroWithMigrations(db *gorm.DB, options Options, migrations []Migration) *Gormigro {
 	if options.DebugMode {
-		db.LogMode(true)
+		db.Logger = DebugLogger
 	}
 
 	return &Gormigro{
 		db:                   db,
 		options:              options,
 		migrationsCollection: NewCollectionWithMigrations(migrations),
-		migrationManager:     NewMigrationManager(db.New(), options.MigrationTable),
+		migrationManager: NewMigrationManager(db.Session(&gorm.Session{
+			WithConditions: false,
+		}), options.MigrationTable),
 	}
 }
 
@@ -115,7 +131,9 @@ func (g *Gormigro) MigrateFrom(id string) error {
 	for _, m := range mc.List() {
 		log.Printf("Running migration with ID %s\n", m.ID)
 		// start the transaction per migration
-		tx := g.db.New()
+		tx := g.db.Session(&gorm.Session{
+			WithConditions: false,
+		})
 		if tx.Error != nil {
 			return tx.Error
 		}
@@ -173,7 +191,9 @@ func (g *Gormigro) DropSchema() error {
 		Name string
 	}
 
-	rows, err := g.db.DB().Query("SHOW TABLES")
+	rows, err := g.db.Session(&gorm.Session{
+		WithConditions: false,
+	}).Raw("SHOW TABLES").Rows()
 	if err != nil {
 		return err
 	}

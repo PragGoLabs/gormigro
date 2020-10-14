@@ -1,7 +1,7 @@
 package gormigro
 
 import (
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 )
 
 type MigrationManager struct {
@@ -68,10 +68,10 @@ func (mm MigrationManager) ClearExecutedMigrations() error {
 
 // initTable initialize migration table
 func (mm MigrationManager) initTable() {
-	mm.db.CreateTable(NewMigrationTable(mm.tableName))
+	mm.db.Migrator().CreateTable(NewMigrationTable(mm.tableName))
 }
 
 // checkIfTableExists check if migration table exists
 func (mm MigrationManager) checkIfTableExists() bool {
-	return mm.db.HasTable(NewMigrationTable(mm.tableName))
+	return mm.db.Migrator().HasTable(NewMigrationTable(mm.tableName))
 }

@@ -1,6 +1,6 @@
 package gormigro
 
-import "github.com/jinzhu/gorm"
+import "gorm.io/gorm"
 
 type migrationFnc func(*gorm.DB) error
 type rollbackFnc func(*gorm.DB) error

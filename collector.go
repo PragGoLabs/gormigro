@@ -2,7 +2,7 @@ package gormigro
 
 import (
 	"errors"
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 )
 
 // DefaultCollector is default instance live globally in context

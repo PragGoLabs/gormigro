@@ -10,20 +10,20 @@
   version = "v1.0"
 
 [[projects]]
-  digest = "1:7d4958827c8f2d9d31e24d9a3a52194eb179f77d854692e57954c516ecf76748"
-  name = "github.com/jinzhu/gorm"
-  packages = ["."]
-  pruneopts = ""
-  revision = "472c70caa40267cb89fd8facb07fe6454b578626"
-  version = "v1.9.2"
-
-[[projects]]
   branch = "master"
   digest = "1:d9a7385b84d8187fd94e0357045c6fa1147ca94caa56fdd539336c7c102fc728"
   name = "github.com/jinzhu/inflection"
   packages = ["."]
   pruneopts = ""
   revision = "04140366298a54a039076d798123ffa108fff46c"
+
+[[projects]]
+  digest = "1:0ef888f54665612c85509b88956e1dd958b010c92b3c85f1aa37c13cb5b21e3e"
+  name = "github.com/jinzhu/now"
+  packages = ["."]
+  pruneopts = ""
+  revision = "7e7333ac029d4aad7e88500a30889fcd22489425"
+  version = "v1.1.1"
 
 [[projects]]
   digest = "1:a1403cc8a94b8d7956ee5e9694badef0e7b051af289caad1cf668331e3ffa4f6"
@@ -41,12 +41,26 @@
   revision = "298182f68c66c05229eb03ac171abe6e309ee79a"
   version = "v1.0.3"
 
+[[projects]]
+  digest = "1:8321f2d0aa0c4a330ac5b6b1d46ac4da991e02175c226d7bae001419997c567e"
+  name = "gorm.io/gorm"
+  packages = [
+    ".",
+    "clause",
+    "logger",
+    "schema",
+    "utils",
+  ]
+  pruneopts = ""
+  revision = "9eec6ae06638665661f9872e783a42613527e146"
+  version = "v1.20.2"
+
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
-    "github.com/jinzhu/gorm",
     "github.com/spf13/cobra",
+    "gorm.io/gorm",
   ]
   solver-name = "gps-cdcl"
   solver-version = 1
