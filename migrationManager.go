@@ -1,6 +1,8 @@
 package gormigro
 
 import (
+	"errors"
+
 	"gorm.io/gorm"
 )
 
@@ -58,6 +60,18 @@ func (mm MigrationManager) RemoveMigration(id string) {
 	if res.Error != nil {
 		panic(res.Error)
 	}
+}
+
+func (mm MigrationManager) IsMigrationExecuted(id string) bool {
+	res := mm.db.Find(NewMigrationTable(id))
+	if res.Error != nil && errors.Is(res.Error, gorm.ErrRecordNotFound) {
+		return false
+	}
+	if res.Error != nil {
+		panic(res.Error)
+	}
+
+	return true
 }
 
 func (mm MigrationManager) ClearExecutedMigrations() error {

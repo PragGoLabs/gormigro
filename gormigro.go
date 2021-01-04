@@ -10,6 +10,10 @@ import (
 	"gorm.io/gorm/logger"
 )
 
+const (
+	InitialSchemaMigrationName = "__initialMigration"
+)
+
 // Gormigro is migration tool which allow you to simply handle migrations with gorm.io
 type Gormigro struct {
 	// db gorm database
@@ -48,7 +52,7 @@ func NewGormigro(db *gorm.DB, options Options) *Gormigro {
 		options:              options,
 		migrationsCollection: DefaultCollector.Export(),
 		migrationManager: NewMigrationManager(db.Session(&gorm.Session{
-			WithConditions: false,
+			NewDB: true,
 		}), options.MigrationTable),
 	}
 }
@@ -65,7 +69,7 @@ func NewGormigroWithMigrations(db *gorm.DB, options Options, migrations []Migrat
 		options:              options,
 		migrationsCollection: NewCollectionWithMigrations(migrations),
 		migrationManager: NewMigrationManager(db.Session(&gorm.Session{
-			WithConditions: false,
+			NewDB: true,
 		}), options.MigrationTable),
 	}
 }
@@ -132,7 +136,7 @@ func (g *Gormigro) MigrateFrom(id string) error {
 		log.Printf("Running migration with ID %s\n", m.ID)
 		// start the transaction per migration
 		tx := g.db.Session(&gorm.Session{
-			WithConditions: false,
+			NewDB: true,
 		})
 		if tx.Error != nil {
 			return tx.Error
@@ -192,7 +196,7 @@ func (g *Gormigro) DropSchema() error {
 	}
 
 	rows, err := g.db.Session(&gorm.Session{
-		WithConditions: false,
+		NewDB: true,
 	}).Raw("SHOW TABLES").Rows()
 	if err != nil {
 		return err
@@ -201,7 +205,7 @@ func (g *Gormigro) DropSchema() error {
 	defer rows.Close()
 
 	// disable FK check for safe remove
-	g.db.Exec("SET FOREIGN_KEY_CHECKS=0;")
+	g.db.Exec("SET GLOBAL FOREIGN_KEY_CHECKS = 0;")
 	for rows.Next() {
 		var table Table
 
@@ -216,7 +220,7 @@ func (g *Gormigro) DropSchema() error {
 	}
 
 	// and enable again
-	g.db.Exec("SET FOREIGN_KEY_CHECKS=1;")
+	g.db.Exec("SET GLOBAL FOREIGN_KEY_CHECKS = 1;")
 
 	log.Println("Dropping completed")
 
@@ -226,6 +230,10 @@ func (g *Gormigro) DropSchema() error {
 // internal usage
 func (g *Gormigro) runInitialSchemaFunc() error {
 	log.Println("Running initial schema migration")
+
+	if g.migrationManager.IsMigrationExecuted(InitialSchemaMigrationName) {
+		return nil
+	}
 
 	// start transaction
 	tx := g.db.Begin()
@@ -237,6 +245,9 @@ func (g *Gormigro) runInitialSchemaFunc() error {
 
 		return err
 	}
+
+	// and mark the init func as executed
+	g.migrationManager.AddMigration(InitialSchemaMigrationName)
 
 	return tx.Commit().Error
 }

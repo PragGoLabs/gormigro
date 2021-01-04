@@ -44,8 +44,10 @@ type MigrationTable struct {
 }
 
 func NewMigrationTable(tableName string) *MigrationTable {
+	// temporary fix, gorm cloning the struct thru reflection and there's
+	// so it'll override the tableName settings
 	return &MigrationTable{
-		tableName: tableName,
+		tableName: DefaultMigrationTable,
 	}
 }
 
