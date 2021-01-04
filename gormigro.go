@@ -205,7 +205,7 @@ func (g *Gormigro) DropSchema() error {
 	defer rows.Close()
 
 	// disable FK check for safe remove
-	g.db.Exec("SET GLOBAL FOREIGN_KEY_CHECKS = 0;")
+	g.db.Exec("SET GLOBAL FOREIGN_KEY_CHECKS=0;")
 	for rows.Next() {
 		var table Table
 
@@ -220,7 +220,7 @@ func (g *Gormigro) DropSchema() error {
 	}
 
 	// and enable again
-	g.db.Exec("SET GLOBAL FOREIGN_KEY_CHECKS = 1;")
+	g.db.Exec("SET GLOBAL FOREIGN_KEY_CHECKS=1;")
 
 	log.Println("Dropping completed")
 

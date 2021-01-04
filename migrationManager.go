@@ -25,7 +25,7 @@ func NewMigrationManager(db *gorm.DB, tableName string) MigrationManager {
 }
 
 func (mm MigrationManager) AddMigration(id string) {
-	record := NewMigrationTable(mm.tableName)
+	record := NewMigrationTable()
 	record.MigrationId = id
 	if mm.db.Error != nil {
 		panic(mm.db.Error)
@@ -38,7 +38,7 @@ func (mm MigrationManager) AddMigration(id string) {
 }
 
 func (mm MigrationManager) GetLastExecutedMigration() *MigrationTable {
-	lastResult := mm.db.Last(NewMigrationTable(mm.tableName))
+	lastResult := mm.db.Last(NewMigrationTable())
 	if lastResult.RowsAffected == 0 {
 		return nil
 	}
@@ -50,7 +50,7 @@ func (mm MigrationManager) GetLastExecutedMigration() *MigrationTable {
 }
 
 func (mm MigrationManager) RemoveMigration(id string) {
-	record := NewMigrationTable(mm.tableName)
+	record := NewMigrationTable()
 	record.MigrationId = id
 	if mm.db.Error != nil {
 		panic(mm.db.Error)
@@ -63,7 +63,7 @@ func (mm MigrationManager) RemoveMigration(id string) {
 }
 
 func (mm MigrationManager) IsMigrationExecuted(id string) bool {
-	res := mm.db.Find(NewMigrationTable(id))
+	res := mm.db.Find(NewMigrationTable())
 	if res.Error != nil && errors.Is(res.Error, gorm.ErrRecordNotFound) {
 		return false
 	}
@@ -82,10 +82,10 @@ func (mm MigrationManager) ClearExecutedMigrations() error {
 
 // initTable initialize migration table
 func (mm MigrationManager) initTable() {
-	mm.db.Migrator().CreateTable(NewMigrationTable(mm.tableName))
+	mm.db.Migrator().CreateTable(NewMigrationTable())
 }
 
 // checkIfTableExists check if migration table exists
 func (mm MigrationManager) checkIfTableExists() bool {
-	return mm.db.Migrator().HasTable(NewMigrationTable(mm.tableName))
+	return mm.db.Migrator().HasTable(NewMigrationTable())
 }

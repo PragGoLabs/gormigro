@@ -43,7 +43,7 @@ type MigrationTable struct {
 	ExecutedAt  *time.Time `sql:"DEFAULT:current_timestamp"`
 }
 
-func NewMigrationTable(tableName string) *MigrationTable {
+func NewMigrationTable() *MigrationTable {
 	// temporary fix, gorm cloning the struct thru reflection and there's
 	// so it'll override the tableName settings
 	return &MigrationTable{
@@ -52,5 +52,5 @@ func NewMigrationTable(tableName string) *MigrationTable {
 }
 
 func (mt MigrationTable) TableName() string {
-	return mt.tableName
+	return DefaultMigrationTable
 }
