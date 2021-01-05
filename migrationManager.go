@@ -63,7 +63,8 @@ func (mm MigrationManager) RemoveMigration(id string) {
 }
 
 func (mm MigrationManager) IsMigrationExecuted(id string) bool {
-	res := mm.db.Find(NewMigrationTable())
+	var existingMigration MigrationTable
+	res := mm.db.Where("migration_id = ?", id).First(&existingMigration)
 	if res.Error != nil && errors.Is(res.Error, gorm.ErrRecordNotFound) {
 		return false
 	}
